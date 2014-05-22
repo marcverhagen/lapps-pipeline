@@ -7,9 +7,9 @@ servers.brandeis = Server {
     password 'eldrad' };
 
 servers.vassar = Server {
-    url 'http://eldrad.cs-i.brandeis.edu:8080'
-    username 'eldrad'
-    password 'eldrad' };
+    url 'http://grid.anc.org:8080'
+    username 'tester'
+    password 'tester' };
 
 servers.ldc = Server {
     url  'http://grid.ldc.upenn.edu:8080'

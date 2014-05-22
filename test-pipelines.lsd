@@ -1,6 +1,6 @@
 /*
- * A series of test o run some pipeline configurations. There are several tests,
- * each controlled by setting variable to true.
+ * A series of test to run some pipeline configurations. There are several
+ * tests, each triggered by setting a variable to true.
  *
  * TEST_GATE_STAN_ONLP_PLUS_GATE_NER
  * TEST_GATE_STAN_ONLP_PLUS_ONLP_NER
