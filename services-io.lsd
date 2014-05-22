@@ -32,6 +32,8 @@ def print_service_io(service_name, service)
 
 
 print_services_io('Brandeis OpenNLP Services', services.select('brandeis', 'opennlp'));
+print_services_io('Brandeis Stanford Services', services.select('brandeis', 'stanford'));
+x;
 print_services_io('Brandeis GATE Services', services.select('brandeis', 'gate'));
 print_services_io('Vassar GATE Services', services.select('vassar', 'gate'));
 print_services_io('Vassar Stanford Services', services.select('vassar', 'stanford'));

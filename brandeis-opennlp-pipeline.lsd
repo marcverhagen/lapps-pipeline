@@ -9,13 +9,12 @@ include 'Services';
 
 import Pipeline;
 
-//opennlp = services.retrieve('brandeis', 'opennlp');
 opennlp = services.select('brandeis', 'opennlp');
 
 Data data = new Data(3, read('data/in-01.txt'));
 println "\nINPUT:\n" + data.payload;
 
-p = new Pipeline('opennlp', data);
+p = new Pipeline('brandeis-opennlp', data);
 p.add_step(opennlp.tokenizer);
 p.add_step(opennlp.splitter);
 p.add_step(opennlp.tagger);

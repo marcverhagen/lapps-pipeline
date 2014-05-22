@@ -1,7 +1,20 @@
 /*
- * Run all 81 configurations using the four main OpenNLP, GATE and Stanford
- * components. Always uses the same order: tokenizer, splitter, tagger, NER. If
- * the GATE NER is used, then the GATE Gazetteer will be added before it.
+ * A series of test o run some pipeline configurations. There are several tests,
+ * each controlled by setting variable to true.
+ *
+ * TEST_GATE_STAN_ONLP_PLUS_GATE_NER
+ * TEST_GATE_STAN_ONLP_PLUS_ONLP_NER
+ * TEST_GATE_STAN_ONLP_PLUS_STAN_NER
+ *
+ * Test all configurations of Tokenizer, Splitter and Tagger from GATE, Stanford
+ * and OpenNLP, followed by the GATE, OpenNLP or Stanford NER (where GATE also
+ * includes the Gazetteer. The OpenNLP tools are services at Brandeis, Stanford
+ * and GATE tools are services at Vassar.
+ *
+ * TEST_GATE_STAN
+ *
+ * Take all configurations of Tokenizer, Splitter, Tagger and NER, using the
+ * Stanford and OpenNLP services at Brandeis.
  *
  */
 
@@ -11,9 +24,16 @@ include 'Services';
 
 import Pipeline;
 
+// Edit these to deermine what tests are used
+def TEST_GATE_STAN_ONLP_PLUS_GATE_NER = false;
+def TEST_GATE_STAN_ONLP_PLUS_ONLP_NER = false;
+def TEST_GATE_STAN_ONLP_PLUS_STAN_NER = false;
+def TEST_GATE_STAN = true;
+
 
 opennlp = services.select('brandeis', 'opennlp');
-stanford = services.select('vassar', 'stanford');
+stanfordb = services.select('brandeis', 'stanford');
+stanfordv = services.select('vassar', 'stanford');
 gate = services.select('vassar', 'gate');
 converters =  services.select('vassar', 'converters');
 
@@ -21,11 +41,11 @@ Data data = new Data(3, read('data/in-01.txt'));
 println "\nINPUT:\n" + data.payload;
 
 
-if (true) {
+if (TEST_GATE_STAN_ONLP_PLUS_ONLP_NER) {
     count = 0;
-    for (tokenizer in [gate.tokenizer, stanford.tokenizer, opennlp.tokenizer]) {
-        for (splitter in [gate.splitter, stanford.splitter, opennlp.splitter]) {
-            for (tagger in [gate.tagger, stanford.tagger, opennlp.tagger]) {
+    for (tokenizer in [gate.tokenizer, standfordv.tokenizer, opennlp.tokenizer]) {
+        for (splitter in [gate.splitter, standfordv.splitter, opennlp.splitter]) {
+            for (tagger in [gate.tagger, standfordv.tagger, opennlp.tagger]) {
                 count += 1;
                 count_str = count as String;
                 p = new Pipeline('hybrid-onlp-' + count_str.padLeft(2, '0'), data, converters);
@@ -33,35 +53,27 @@ if (true) {
                 p.add_step(splitter);
                 p.add_step(tagger);
                 p.add_step(opennlp.ner);
-                p.run();
-            }
-        }
-    }
-}
+                p.run(); }}}} 
 
-if (true) {
+if (TEST_GATE_STAN_ONLP_PLUS_STAN_NER) {
     count = 0;
-    for (tokenizer in [gate.tokenizer, stanford.tokenizer, opennlp.tokenizer]) {
-        for (splitter in [gate.splitter, stanford.splitter, opennlp.splitter]) {
-            for (tagger in [gate.tagger, stanford.tagger, opennlp.tagger]) {
+    for (tokenizer in [gate.tokenizer, standfordv.tokenizer, opennlp.tokenizer]) {
+        for (splitter in [gate.splitter, standfordv.splitter, opennlp.splitter]) {
+            for (tagger in [gate.tagger, standfordv.tagger, opennlp.tagger]) {
                 count += 1;
                 count_str = count as String;
                 p = new Pipeline('hybrid-stan-' + count_str.padLeft(2, '0'), data, converters);
                 p.add_step(tokenizer);
                 p.add_step(splitter);
                 p.add_step(tagger);
-                p.add_step(stanford.ner);
-                p.run();
-            }
-        }
-    }
-}
+                p.add_step(standfordv.ner);
+                p.run(); }}}}
 
-if (true) {
+if (TEST_GATE_STAN_ONLP_PLUS_GATE_NER) {
     count = 0;
-    for (tokenizer in [gate.tokenizer, stanford.tokenizer, opennlp.tokenizer]) {
-        for (splitter in [gate.splitter, stanford.splitter, opennlp.splitter]) {
-            for (tagger in [gate.tagger, stanford.tagger, opennlp.tagger]) {
+    for (tokenizer in [gate.tokenizer, standfordv.tokenizer, opennlp.tokenizer]) {
+        for (splitter in [gate.splitter, standfordv.splitter, opennlp.splitter]) {
+            for (tagger in [gate.tagger, standfordv.tagger, opennlp.tagger]) {
                 count += 1;
                 count_str = count as String;
                 p = new Pipeline('hybrid-gate-' + count_str.padLeft(2, '0'), data, converters);
@@ -70,8 +82,19 @@ if (true) {
                 p.add_step(tagger);
                 p.add_step(gate.gazetteer);
                 p.add_step(gate.ner);
-                p.run();
-            }
-        }
-    }
-}
+                p.run(); }}}}
+
+if (TEST_GATE_STAN) {
+    count = 0;
+    for (tokenizer in [stanfordb.tokenizer, opennlp.tokenizer]) {
+        for (splitter in [stanfordb.splitter, opennlp.splitter]) {
+            for (tagger in [stanfordb.tagger, opennlp.tagger]) {
+		for (ner in [stanfordb.ner, opennlp.ner]) {
+		    count += 1;
+		    count_str = count as String;
+		    p = new Pipeline('hybrid-onlp-stan-' + count_str.padLeft(2, '0'), data, converters);
+		    p.add_step(tokenizer);
+		    p.add_step(splitter);
+		    p.add_step(tagger);
+		    p.add_step(ner);
+		    p.run(); }}}}}

@@ -14,7 +14,7 @@ gate = services.retrieve('brandeis', 'gate');
 Data data = new Data(3, read('data/in-01.txt'));
 println "\nINPUT:\n" + data.payload;
 
-p = new Pipeline('gate-brandeis', data);
+p = new Pipeline('brandeis-gate', data);
 p.add_step(gate.tokenizer);
 p.add_step(gate.splitter);
 //p.add_step(gate.tagger);

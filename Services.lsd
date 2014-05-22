@@ -25,6 +25,12 @@ services.brandeis.opennlp =
       'tagger': 'brandeis_eldrad_grid_1:opennlp.postagger',
       'ner': 'brandeis_eldrad_grid_1:opennlp.namedentityrecognizer' ];
 
+services.brandeis.stanford = 
+    [ 'splitter': 'brandeis_eldrad_grid_1:stanfordnlp.splitter',
+      'tokenizer': 'brandeis_eldrad_grid_1:stanfordnlp.tokenizer',
+      'tagger': 'brandeis_eldrad_grid_1:stanfordnlp.postagger',
+      'ner': 'brandeis_eldrad_grid_1:stanfordnlp.namedentityrecognizer' ];
+
 services.brandeis.gate = 
     [ 'splitter': 'brandeis_eldrad_grid_1:gate.splitter_1.3.5',
       'tokenizer': 'brandeis_eldrad_grid_1:gate.tokenizer_1.3.5',
