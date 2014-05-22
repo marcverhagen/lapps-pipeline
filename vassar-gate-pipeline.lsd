@@ -16,7 +16,7 @@ gate = services.select('vassar', 'gate');
 Data data = new Data(3, read('data/in-01.txt'));
 println "\nINPUT:\n" + data.payload;
 
-p = new Pipeline('gate', data, converters);
+p = new Pipeline('vassar-gate', data, converters);
 p.add_step(gate.tokenizer);
 p.add_step(gate.splitter);
 p.add_step(gate.tagger);

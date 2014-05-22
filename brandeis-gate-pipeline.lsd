@@ -9,7 +9,7 @@ include 'Services';
 
 import Pipeline;
 
-gate = services.retrieve('brandeis', 'gate');
+gate = services.select('brandeis', 'gate');
 
 Data data = new Data(3, read('data/in-01.txt'));
 println "\nINPUT:\n" + data.payload;
