@@ -1,0 +1,25 @@
+/*
+ * Test the Vassar GATE pipeline.
+ *
+ */
+
+
+include 'Common';
+include 'Services';
+
+import Pipeline;
+
+
+converters = services.select('vassar', 'converters');
+gate = services.select('vassar', 'gate');
+
+Data data = new Data(3, read('data/in-01.txt'));
+println "\nINPUT:\n" + data.payload;
+
+p = new Pipeline('gate', data, converters);
+p.add_step(gate.tokenizer);
+p.add_step(gate.splitter);
+p.add_step(gate.tagger);
+p.add_step(gate.gazetteer);
+p.add_step(gate.ner);
+p.run();

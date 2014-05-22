@@ -1,0 +1,23 @@
+/*
+ * Test the Vassar Stanford pipeline.
+ *
+ */
+
+
+include 'Common';
+include 'Services';
+
+import Pipeline;
+
+
+stanford = services.select('vassar', 'stanford');
+
+Data data = new Data(3, read('data/in-01.txt'));
+println "\nINPUT:\n" + data.payload;
+
+p = new Pipeline('stanford', data);
+p.add_step(stanford.tokenizer);
+p.add_step(stanford.splitter);
+p.add_step(stanford.tagger);
+p.add_step(stanford.ner);
+p.run();

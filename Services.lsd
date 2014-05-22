@@ -1,0 +1,79 @@
+/* 
+ * Interface to Brandeis and Vassar services. Use one of the named closures in
+ * the services map to get maps of services:
+ *
+ *    services.get_brandeis_opennlp_services()
+ *    services.get_vassar_stanford_services()
+ *    services.get_vassar_gate_services()
+ *    services.get_vassar_converter_services()
+ *
+ */
+
+include 'Servers';
+
+services = [:];
+
+
+/* Names of services, grouped im modules */
+
+services.brandeis = [:];
+services.vassar = [:];
+
+services.brandeis.opennlp = 
+    [ 'splitter': 'brandeis_eldrad_grid_1:opennlp.splitter',
+      'tokenizer': 'brandeis_eldrad_grid_1:opennlp.tokenizer',
+      'tagger': 'brandeis_eldrad_grid_1:opennlp.postagger',
+      'ner': 'brandeis_eldrad_grid_1:opennlp.namedentityrecognizer' ];
+
+services.brandeis.gate = 
+    [ 'splitter': 'brandeis_eldrad_grid_1:gate.splitter_1.3.5',
+      'tokenizer': 'brandeis_eldrad_grid_1:gate.tokenizer_1.3.5',
+      'tagger': 'brandeis_eldrad_grid_1:gate.tagger_1.3.5',
+      'gazetteer': 'brandeis_eldrad_grid_1:gate.gazetteer_1.3.5',
+      'ner': 'brandeis_eldrad_grid_1:gate.ner_1.3.5' ];
+
+services.vassar.stanford =
+    [ 'tokenizer': 'anc:stanford.tokenizer_1.4.0',
+      'splitter': 'anc:stanford.splitter_1.4.0',
+      'tagger': 'anc:stanford.tagger_1.4.0',
+      'ner': 'anc:stanford.ner_1.4.0' ];
+
+services.vassar.gate =
+    [ 'tokenizer': 'anc:gate.tokenizer_1.3.5',
+      'splitter': 'anc:gate.splitter_1.3.5',
+      'gazetteer': 'anc:gate.gazetteer_1.3.5',
+      'tagger': 'anc:gate.tagger_1.3.5',
+      'ner': 'anc:gate.ner_1.3.5' ];
+
+services.vassar.converters =
+    [ 'gate2json': 'anc:convert.gate2json_0.4.0',
+      'json2gate': 'anc:convert.json2gate_0.4.0' ];
+
+
+
+services.select = {
+    server_name, module ->
+    def services_map = [:]
+    for (s in services[server_name][module]) {
+        service = Service { server servers[server_name]; name s.value };
+        services_map[s.key] = new ServiceContainer(s.value, service); }
+    return services_map;
+};
+
+
+
+class ServiceContainer
+{
+    /* Simply a class to keep the name of a service around. */
+    
+    def name;
+    def service;
+
+    ServiceContainer(name, service) {
+        this.name = name;
+        this.service = service; }
+}
+
+
+
+

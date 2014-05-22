@@ -1,0 +1,38 @@
+/*
+ * Collect input and output requirements for a set of services.
+ *
+ */
+
+
+include 'Services';
+
+
+def print_services_io(header, services)
+{
+    println "\n>>> " + header;
+    for (sc in services)
+	print_service_io(sc.value.name, sc.value.service);
+    println '';
+}
+
+def print_service_io(service_name, service)
+{
+    print "\n" + service_name + "\n   ";
+    def start_time = System.currentTimeMillis();
+    for (d in service.requires()) 
+        print DiscriminatorRegistry.get(d) + ' ';
+    print "==> ";
+    for (d in service.produces())
+        print DiscriminatorRegistry.get(d) + ' ';
+    print "\n";
+    def end_time = System.currentTimeMillis();
+    def time_elapsed = end_time - start_time;
+    println "   time elapsed: " + time_elapsed + " ms";
+}
+
+
+print_services_io('Brandeis OpenNLP Services', services.select('brandeis', 'opennlp'));
+print_services_io('Brandeis GATE Services', services.select('brandeis', 'gate'));
+print_services_io('Vassar GATE Services', services.select('vassar', 'gate'));
+print_services_io('Vassar Stanford Services', services.select('vassar', 'stanford'));
+print_services_io('Vassar Converter Services', services.select('vassar', 'converters'));

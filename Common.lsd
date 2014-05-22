@@ -1,0 +1,28 @@
+/* 
+ * Some utilties taken from Keith's Common.lsd script.
+ *
+ */
+
+
+read =
+{ file ->
+  if (file instanceof String) {
+      file = new File(file)
+  }
+  if (!(file instanceof File)) {
+      throw new UnsupportedOperationException("Parameter must be a String (path to the file) or a File object.")
+  }
+  return file.getText('UTF-8')
+};
+
+write =
+{ file, contents ->
+  if (file instanceof String) {
+      file = new File(file)
+  }
+  if (!(file instanceof File)) {
+      throw new UnsupportedOperationException("The first parameter must be a String (path to the file) or a File object.")
+  }
+  file.setText(contents, 'UTF-8')
+};
+

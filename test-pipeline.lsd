@@ -1,0 +1,27 @@
+/*
+ * Test a pipeline.
+ *
+ */
+
+
+include 'Common';
+include 'Services';
+
+import Pipeline;
+
+
+opennlp = services.select('brandeis', 'opennlp');
+stanford = services.select('vassar', 'stanford');
+gate = services.select('vassar', 'gate');
+converters =  services.select('vassar', 'converters');
+
+Data data = new Data(3, read('data/in-01.txt'));
+println "\nINPUT:\n" + data.payload;
+
+p = new Pipeline('test', data, converters);
+p.add_step(opennlp.tokenizer);
+p.add_step(gate.splitter);
+p.add_step(opennlp.tagger);
+p.add_step(opennlp.ner);
+p.run();
+
