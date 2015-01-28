@@ -49,7 +49,8 @@ services.vassar.gate =
       'splitter': 'anc:gate.splitter_1.3.5',
       'gazetteer': 'anc:gate.gazetteer_1.3.5',
       'tagger': 'anc:gate.tagger_1.3.5',
-      'ner': 'anc:gate.ner_1.3.5' ];
+      'ner': 'anc:gate.ner_1.3.5',
+      'coref': 'anc:gate.coref_1.3.5' ];
 
 services.vassar.converters =
     [ 'gate2json': 'anc:convert.gate2json_0.4.0',

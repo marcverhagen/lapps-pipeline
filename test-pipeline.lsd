@@ -23,5 +23,6 @@ p.add_step(opennlp.tokenizer);
 p.add_step(gate.splitter);
 p.add_step(opennlp.tagger);
 p.add_step(opennlp.ner);
+p.add_step(gate.coref);
 p.run();
 
