@@ -17,22 +17,92 @@ VALIDATOR = 'http://grid.anc.org:9080/json-validator/lif'
 SCHEMA = 'http://vocab.lappsgrid.org/schema/lif-schema.json'
 
 
-class FileValidation(object):
+class File(object):
 
-    """Just a simple object to store valiation results in."""
+    """An object that stores relevant information about a file, including
+    validation results."""
     
-    def __init__(self, fname):
+    def __init__(self, pipeline_dir, fname):
         self.fname = fname
+        self.fpath = os.path.join(pipeline_dir, self.fname)
+        self.fh = codecs.open(self.fpath, encoding='utf8')
+        self.is_error = False
         self.is_json = False
-        self.json_data = None
         self.is_lif = False
-        self.lif_messages = []
+        self.json_data = None
+        self.messages = []
+
+    def validate(self):
+        self.check_filetype()
+        self.check_lif_schema()
+        self.check_lif_principles()
+
+    def check_filetype(self):
+        try:
+            self.json_data = json.load(self.fh)
+            self.is_json = True
+        except ValueError:
+            self.is_json = False
+            self.json_data = None
+        self.is_error = True if has_error(self.fh) else False
+
+    def check_lif_schema(self):
+        if not self.is_json:
+            return
+        cmd = validator_command(self.fpath)
+        p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        output = read_validator_output(p)
+        if output is None:
+            self.is_lif = True
+        else:
+            self.is_lif = False
+            self.messages = ["lif-error - %s" % obj['message'] for obj in output]
+
+    def check_lif_principles(self):
+        if not self.is_lif:
+            return
+        lif = Lif(self.json_data)
+        lif.analyze()
+        self.messages += lif.messages
 
     def print_results(self):
-        print "      %sJSON %sLIF" % ('+' if self.is_json else '-',
-                                      '+' if self.is_lif else '-')
-        for m in self.lif_messages:
-            print "      lif-error: %s" % m
+        print "      %sERROR %sJSON %sLIF" % ('+' if self.is_error else '-',
+                                              '+' if self.is_json else '-',
+                                              '+' if self.is_lif else '-')
+        for m in self.messages:
+            print "      %s" % m
+
+
+
+class Lif(object):
+
+    def __init__(self, json_data):
+        self.json = json_data
+        self.messages = []
+
+    def analyze(self):
+        steps = self.json['views']
+        self.declared = self.get_declared_annotations(steps)
+        self.actual = self.get_actual_annotations(steps)
+        self.messages.append("lif-note - declared annotations: [%s]" % ', '.join(self.declared))
+        self.messages.append("lif-note - actual annotations: [%s]" % ', '.join(self.actual))
+
+    def get_declared_annotations(self, steps):
+        annotations = {}
+        for step in steps:
+            #print step['metadata']
+            for anno in step['metadata']['contains'].keys():
+                annotations[anno] = True
+        return sorted(annotations.keys())
+
+    def get_actual_annotations(self, steps):
+        annotations = {}
+        for step in steps:
+            for anno in step['annotations']:
+                tp = anno['@type']
+                annotations[tp] = annotations.get(tp, 0) + 1
+        # return annotations
+        return sorted(annotations.keys())
 
 
 def validator_command(fname):
@@ -50,58 +120,27 @@ def validate_pipeline(pipeline_dir):
     print "\nValidating %s" % pipeline_dir
     fnames = os.listdir(pipeline_dir)
     for fname in fnames:
+        if fname[-1] == '~': continue
         print "\n  ", fname
-        fv = FileValidation(fname)
-        validate_file(pipeline_dir, fname, fv)
-        fv.print_results()
+        f = File(pipeline_dir, fname)
+        f.validate()
+        f.print_results()
     print
 
 
-def validate_file(pipeline_dir, fname, fv):
-    fpath = os.path.join(pipeline_dir, fname)
-    fh = codecs.open(fpath, encoding='utf8')
-    check_filetype(fh, fv)
-    check_lif_schema(fpath, fv)
-    check_lif_principles(fv)
-
-
-def check_filetype(fh, fv):
-    try:
-        json_data = json.load(fh)
-        #print json_data
-        fv.is_json = True
-        fv.jason_data = json_data
-    except ValueError:
-        fv.is_json = False
-
-
-def check_lif_schema(fpath, fv):
-    if not fv.is_json:
-        return
-    cmd = validator_command(fpath)
-    p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-    output = read_validator_output(p)
-    if output is None:
-        fv.is_lif = True
-    else:
-        fv.is_lif = False
-        fv.lif_messages = []
-        for obj in output:
-            fv.lif_messages.append(obj['message'])
-
+def has_error(fh):
+    # TODO: this is very brittle and needs to be changed
+    fh.seek(0)
+    line = fh.readline()
+    if line.startswith('Unable to execute'):
+        return True
+    return False
 
 def read_validator_output(process):
     for line in process.stdout:
         if line.startswith('[') and line.endswith(']'):
             return eval(line)
     return None
-
-    
-def check_lif_principles(fv):
-    if not fv.is_lif:
-        return
-    # TODO: this shows up empty
-    print fv.json_data
     
 
     

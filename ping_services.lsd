@@ -12,18 +12,23 @@ def ping_services(services)
 {
     println '';
     for (sc in services)
-        ping_service(sc.value.name, sc.value.service);
+	ping_service(sc.value.name, sc.value.service);
 }
 
 def ping_service(service_name, service)
 {
     def start_time = System.currentTimeMillis();
-    requires = service.requires();
-    produces = service.produces();
-    result = service.execute();
+    try {
+	requires = service.requires();
+	//produces = service.produces();
+	//result = service.execute();
+	error = '';
+    } catch (Error e) {
+	error = 'ERROR';
+    }
     def end_time = System.currentTimeMillis();
     def time_elapsed = end_time - start_time;
-    println time_elapsed + "\t" + service_name;
+    println time_elapsed + "\t" + error + service_name;
 }
 
 
