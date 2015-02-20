@@ -30,7 +30,8 @@ class Pipeline
             data  = run_step(step, results_dir, data); }
         if (DiscriminatorRegistry.get(data.discriminator) == 'gate') {
             data = this.converters.gate2json.service.execute(data);
-            print_result(this.converters.gate2json, results_dir, data, System.currentTimeMillis()); }
+            print_result(this.converters.gate2json, results_dir, data,
+                         System.currentTimeMillis()); }
         def total_time = System.currentTimeMillis() - t0;
         println "\nTotal time elapsed: " + total_time + " ms\n";
     }
@@ -43,12 +44,14 @@ class Pipeline
         if (format_in == 'gate' && step.name.substring(4,8) != 'gate') {
             println '   converting: gate --> json';
             data = this.converters.gate2json.service.execute(data);
-            print_result(this.converters.gate2json, results_dir, data, System.currentTimeMillis());
+            print_result(this.converters.gate2json, results_dir, data,
+                         System.currentTimeMillis());
         }
         else if (format_in == 'json' && step.name.substring(4,8) == 'gate') {
             println '   converting: json --> gate';
             data = this.converters.json2gate.service.execute(data);
-            print_result(this.converters.json2gate, results_dir, data, System.currentTimeMillis());
+            print_result(this.converters.json2gate, results_dir, data,
+                         System.currentTimeMillis());
         }
         Data result = step.service.execute(data);
         def t2 = System.currentTimeMillis();
@@ -66,5 +69,5 @@ class Pipeline
         else {
             outfile.setText(result.payload, 'UTF-8'); }
     }
-    
+
 }

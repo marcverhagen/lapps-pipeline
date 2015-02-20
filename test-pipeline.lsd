@@ -10,19 +10,19 @@ include 'Services';
 import Pipeline;
 
 
-opennlp = services.select('brandeis', 'opennlp');
-stanford = services.select('vassar', 'stanford');
-gate = services.select('vassar', 'gate');
-converters =  services.select('vassar', 'converters');
+b_opennlp = services.select('brandeis', 'opennlp');
+v_stanford = services.select('vassar', 'stanford');
+b_gate = services.select('brandeis', 'gate');
+v_gate = services.select('vassar', 'gate');
+v_converters =  services.select('vassar', 'converters');
 
 Data data = new Data(3, read('data/in-01.txt'));
 println "\nINPUT:\n" + data.payload;
 
-p = new Pipeline('test', data, converters);
-p.add_step(opennlp.tokenizer);
-p.add_step(gate.splitter);
-p.add_step(opennlp.tagger);
-p.add_step(opennlp.ner);
-p.add_step(gate.coref);
+p = new Pipeline('test', data, v_converters);
+p.add_step(b_opennlp.tokenizer);
+p.add_step(v_gate.splitter);
+p.add_step(b_opennlp.tagger);
+p.add_step(b_opennlp.ner);
+p.add_step(v_gate.coref);
 p.run();
-

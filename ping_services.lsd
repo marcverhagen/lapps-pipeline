@@ -7,6 +7,7 @@
 include 'Services';
 
 
+
 def ping_services(services)
 {
     println '';
@@ -28,7 +29,7 @@ def ping_service(service_name, service)
 
 ping_services(services.select('brandeis', 'opennlp'));
 ping_services(services.select('brandeis', 'gate'));
-ping_services(services.select('vassar', 'gate'));
-ping_services(services.select('vassar', 'stanford'));
-ping_services(services.select('vassar', 'converters'));
+//ping_services(services.select('vassar', 'gate'));
+//ping_services(services.select('vassar', 'stanford'));
+//ping_services(services.select('vassar', 'converters'));
 println '';
