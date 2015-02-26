@@ -24,8 +24,9 @@ class Pipeline
         println "\nRUNNING: " + this.name + "\n";
         def t0 = System.currentTimeMillis();
         String results_dir = 'data/out-' + this.name + '-' + t0;
-        Data data = this.input;
         new File(results_dir).mkdir();
+        Data data = this.input;
+        print_input(results_dir, data, System.currentTimeMillis());
         for (step in this.steps) {
             data  = run_step(step, results_dir, data); }
         if (DiscriminatorRegistry.get(data.discriminator) == 'gate') {
@@ -38,7 +39,6 @@ class Pipeline
 
     def run_step(step, results_dir, data)
     {
-        def t1 = System.currentTimeMillis();
         def format_in = DiscriminatorRegistry.get(data.discriminator);
         println step.name + '  ' + format_in;
         if (format_in == 'gate' && step.name.substring(4,8) != 'gate') {
@@ -54,9 +54,17 @@ class Pipeline
                          System.currentTimeMillis());
         }
         Data result = step.service.execute(data);
-        def t2 = System.currentTimeMillis();
-        print_result(step, results_dir, result, t2);
+        print_result(step, results_dir, result, System.currentTimeMillis());
         return result;
+    }
+
+    def print_input(results_dir, data, t)
+    {
+        def outfile = new File(results_dir + '/' + t + '-input.txt');
+	// the payload is not what is expected by Container, so fix it
+	def lapps_payload = "{\"text\": {\"@value\": \"" + this.input.payload.trim() + "\"}}";
+	Container container = new Container(lapps_payload);
+	outfile.setText(container.toPrettyJson(), 'UTF-8');
     }
 
     def print_result(step, results_dir, result, t2)

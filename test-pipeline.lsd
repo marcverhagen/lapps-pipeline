@@ -21,6 +21,7 @@ println "\nINPUT:\n" + data.payload;
 
 p = new Pipeline('test', data, v_converters);
 p.add_step(b_opennlp.tokenizer);
+//p.add_step(v_gate.tokenizer);
 p.add_step(v_gate.splitter);
 p.add_step(b_opennlp.tagger);
 p.add_step(b_opennlp.ner);

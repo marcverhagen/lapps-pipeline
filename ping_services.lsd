@@ -7,7 +7,6 @@
 include 'Services';
 
 
-
 def ping_services(services)
 {
     println '';
@@ -23,7 +22,7 @@ def ping_service(service_name, service)
 	//produces = service.produces();
 	//result = service.execute();
 	error = '';
-    } catch (Error e) {
+    } catch (Throwable e) {
 	error = 'ERROR';
     }
     def end_time = System.currentTimeMillis();
